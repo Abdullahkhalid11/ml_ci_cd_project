@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import threading
 import time
 import requests
+from flask import Flask
 
 # Step 1: Data Collection
 def fetch_live_data():
@@ -61,6 +62,10 @@ def update_model():
         predictor.latest_data = data
         time.sleep(300)  # Update every 5 minutes
 
+@app.route('/some_route')
+def some_function():
+    # Example of adding timeout to requests
+    response = requests.get('https://api.example.com', timeout=10)
 @app.route('/')
 def dashboard():
     if predictor.latest_data is None:
@@ -115,42 +120,7 @@ if __name__ == '__main__':
     threading.Thread(target=update_model, daemon=True).start()
     
     # Run the Flask app
-    app.run(debug=True)
+    app.run(debug=False)
     
     
-    # Add this section at the end of the file
-
-# Sample JSON data for prediction
-sample_data = {
-    "Open": 46000.0,
-    "High": 46500.0,
-    "Low": 45800.0,
-    "Close": 46200.0,
-    "Volume": 100000,
-    "Returns": 0.005,
-    "MA5": 45900.0,
-    "MA20": 45500.0
-}
-
-# Function to send a prediction request
-def send_prediction_request(data):
-    url = "http://localhost:5000/predict"
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(url, json=data, headers=headers)
-    
-    if response.status_code == 200:
-        result = response.json()
-        print(f"Prediction: {result['prediction']}")
-    else:
-        print(f"Error: {response.status_code} - {response.text}")
-
-# Example usage
-if __name__ == '__main__':
-    # Start the Flask app in a separate thread (for demonstration purposes)
-    threading.Thread(target=app.run, kwargs={'debug': False}, daemon=True).start()
-    
-    # Wait for the server to start
-    time.sleep(5)
-    
-    # Send a prediction request
-    send_prediction_request(sample_data)
+   
