@@ -1,7 +1,8 @@
+flask
 pandas
 numpy
 scikit-learn
-flask
 yfinance
 plotly
 requests
+pytest
