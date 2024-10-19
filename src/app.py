@@ -35,6 +35,9 @@ class StockPredictor:
         data['MA20'] = data['Close'].rolling(window=20).mean()
         data['Target'] = data['Close'].shift(-1)
         data = data.dropna()
+        
+        if data.shape[0] < 5:  # Ensure at least 5 samples remain after preprocessing
+            raise ValueError("Not enough data after preprocessing. Ensure more data is available.")
 
         features = ['Open', 'High', 'Low', 'Close', 'Volume', 'Returns', 'MA5', 'MA20']
         X = data[features]

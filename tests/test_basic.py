@@ -8,7 +8,7 @@ def test_basic():
 def test_import():
     from src.app import app
     assert app is not None
-
+    
 def test_stock_predictor():
     predictor = StockPredictor()
     assert predictor is not None
