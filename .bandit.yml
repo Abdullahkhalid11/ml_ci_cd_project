@@ -1,2 +1,0 @@
-- name: Security check with bandit
-  run: bandit -r . -f custom -o bandit-report.txt -c .bandit
