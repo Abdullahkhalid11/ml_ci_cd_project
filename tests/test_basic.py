@@ -15,16 +15,23 @@ def test_stock_predictor():
 
 def test_prepare_data():
     predictor = StockPredictor()
+    N = 40  # Number of data points
     data = pd.DataFrame({
-        'Close': [100, 101, 102, 103, 104],
-        'Open': [99, 100, 101, 102, 103],
-        'High': [101, 102, 103, 104, 105],
-        'Low': [98, 99, 100, 101, 102],
-        'Volume': [1000, 1100, 1200, 1300, 1400]
+        'Close': list(range(100, 100 + N)),
+        'Open': list(range(99, 99 + N)),
+        'High': list(range(101, 101 + N)),
+        'Low': list(range(98, 98 + N)),
+        'Volume': [1000 + i * 100 for i in range(N)],
     })
+    assert not data.empty
     X_train, X_test, y_train, y_test = predictor.prepare_data(data)
-    assert len(X_train) + len(X_test) == len(data) - 1  # One row lost due to pct_change
 
+    # Update expected rows to account for both pct_change and MA20, hence 20 rows are lost
+    expected_rows = N - 20  # One row for pct_change and 19 for MA20
+    actual_rows = len(X_train) + len(X_test)
+    
+    assert actual_rows == expected_rows, f"Expected {expected_rows} rows, got {actual_rows}"
+    
 def test_flask_app():
     client = app.test_client()
     response = client.get('/')

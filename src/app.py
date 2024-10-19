@@ -27,6 +27,9 @@ class StockPredictor:
         self.metrics = {}
 
     def prepare_data(self, data):
+        if data.empty:
+            raise ValueError("The input data is empty. Provide a valid dataset with samples.")
+        
         data['Returns'] = data['Close'].pct_change()
         data['MA5'] = data['Close'].rolling(window=5).mean()
         data['MA20'] = data['Close'].rolling(window=20).mean()
