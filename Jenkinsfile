@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -11,16 +15,16 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("ml-app:${env.BUILD_ID}")
+                    docker.build("abdullah455/ml-app:${env.BUILD_NUMBER}")
                 }
             }
         }
         
-        stage('Push to Registry') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image("ml-app:${env.BUILD_ID}").push()
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.image("abdullah455/ml-app:${env.BUILD_NUMBER}").push()
                     }
                 }
             }
@@ -28,7 +32,7 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                sh "docker run -d -p 5000:5000 ml-app:${env.BUILD_ID}"
+                sh "docker run -d -p 5000:5000 abdullah455/ml-app:${env.BUILD_NUMBER}"
             }
         }
     }
